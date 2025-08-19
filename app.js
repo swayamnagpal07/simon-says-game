@@ -39,7 +39,7 @@ function levelUp() {
         maxScore=level;
     }
     h2.innerHTML = `Level ${level}<br>Your maximum score ${maxScore} ` ;
-    let randIdx = Math.floor(Math.random() * 3);
+    let randIdx = Math.floor(Math.random() * allBtns.length);
     let randBtn = document.querySelector(`.${btns[randIdx]}`);
     gameSeq.push(btns[randIdx]);
     console.log("game ", gameSeq);
