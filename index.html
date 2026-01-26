@@ -1,31 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simon Says Game</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simon Says Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
-  <div class="game-wrapper">
-    <h1>🎮 Simon Says</h1>
-    <h2>Press any key to start</h2>
+  <body>
+    <div class="game-wrapper">
+      <h1>🎮 Simon Says</h1>
+      <h2 id="status">Tap Start to Play</h2>
+      <button id="startBtn">▶ Start Game</button>
 
-    <div class="btn-container">
-      <div class="line-one">
-        <div class="btn red" id="red"></div>
-        <div class="btn yellow" id="yellow"></div>
+      <div class="btn-container">
+        <div class="line-one">
+          <div class="btn red" id="red"></div>
+          <div class="btn yellow" id="yellow"></div>
+        </div>
+        <div class="line-two">
+          <div class="btn green" id="green"></div>
+          <div class="btn purple" id="purple"></div>
+        </div>
       </div>
-      <div class="line-two">
-        <div class="btn green" id="green"></div>
-        <div class="btn purple" id="purple"></div>
-      </div>
+
+      <p class="hint">Repeat the sequence correctly</p>
+      <p class="hint">Made with ❤️ by Swayam Nagpal</p>
     </div>
 
-    <p class="hint">Repeat the sequence correctly</p>
-  </div>
-
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
