@@ -1,9 +1,9 @@
 // ===== GAME STATE =====
 let gameSeq = [];
 let userSeq = [];
-let gameStarted = false;
 let level = 0;
 let maxScore = 0;
+let gameStarted = false;
 
 // ===== SOUNDS =====
 let gameSound = new Audio("sounds/beep.wav");
@@ -11,45 +11,55 @@ let userSound = new Audio("sounds/user-input.wav");
 let wrongSound = new Audio("sounds/game-over.wav");
 
 // ===== ELEMENTS =====
-let btns = ["red", "yellow", "green", "purple"];
-let h2 = document.querySelector("h2");
-let allBtns = document.querySelectorAll(".btn");
+const btns = ["red", "yellow", "green", "purple"];
+const statusText = document.getElementById("status");
+const startBtn = document.getElementById("startBtn");
+const allBtns = document.querySelectorAll(".btn");
+
+// ===== UNLOCK AUDIO (MOBILE FIX) =====
+function unlockAudio() {
+  [gameSound, userSound, wrongSound].forEach((sound) => {
+    sound
+      .play()
+      .then(() => sound.pause())
+      .catch(() => {});
+  });
+}
+document.addEventListener("pointerdown", unlockAudio, { once: true });
 
 // ===== START GAME =====
-document.addEventListener("keypress", function () {
-  if (!gameStarted) {
-    gameStarted = true;
-    levelUp();
-  }
+startBtn.addEventListener("pointerdown", () => {
+  if (gameStarted) return;
+  gameStarted = true;
+  startBtn.style.display = "none";
+  levelUp();
 });
 
 // ===== BUTTON EVENTS =====
-for (let btn of allBtns) {
-  btn.addEventListener("click", btnPressed);
-}
+allBtns.forEach((btn) => {
+  btn.addEventListener("pointerdown", btnPressed);
+});
 
-// ===== GAME FLASH (SYNC WITH SOUND) =====
+// ===== GAME FLASH =====
 function gameFlash(btn) {
   btn.classList.add("flash");
-
   gameSound.currentTime = 0;
   gameSound.play();
 
-  gameSound.onended = () => {
+  setTimeout(() => {
     btn.classList.remove("flash");
-  };
+  }, 300);
 }
 
-// ===== USER FLASH (SYNC WITH SOUND) =====
+// ===== USER FLASH =====
 function userFlash(btn) {
   btn.classList.add("userflash");
-
   userSound.currentTime = 0;
   userSound.play();
 
-  userSound.onended = () => {
+  setTimeout(() => {
     btn.classList.remove("userflash");
-  };
+  }, 200);
 }
 
 // ===== LEVEL UP =====
@@ -57,34 +67,31 @@ function levelUp() {
   userSeq = [];
   level++;
 
-  h2.innerHTML = `Level ${level}<br>Max Score: ${maxScore}`;
+  statusText.innerHTML = `Level ${level}<br>Max Score: ${maxScore}`;
 
-  let randIdx = Math.floor(Math.random() * btns.length);
-  let randColor = btns[randIdx];
-  let randBtn = document.querySelector(`.${randColor}`);
-
+  const randColor = btns[Math.floor(Math.random() * btns.length)];
   gameSeq.push(randColor);
-  gameFlash(randBtn);
+
+  const randBtn = document.querySelector(`#${randColor}`);
+  setTimeout(() => gameFlash(randBtn), 400);
 }
 
 // ===== BUTTON PRESS =====
 function btnPressed() {
   if (!gameStarted) return;
 
-  let btn = this;
-  userFlash(btn);
-
-  let userColor = btn.getAttribute("id");
+  const userColor = this.id;
   userSeq.push(userColor);
+  userFlash(this);
 
-  checkAns(userSeq.length - 1);
+  checkAnswer(userSeq.length - 1);
 }
 
 // ===== CHECK ANSWER =====
-function checkAns(idx) {
-  if (userSeq[idx] === gameSeq[idx]) {
+function checkAnswer(index) {
+  if (userSeq[index] === gameSeq[index]) {
     if (userSeq.length === gameSeq.length) {
-      setTimeout(levelUp, 800);
+      setTimeout(levelUp, 700);
     }
   } else {
     gameOver();
@@ -93,26 +100,26 @@ function checkAns(idx) {
 
 // ===== GAME OVER =====
 function gameOver() {
-  maxScore = Math.max(maxScore, level - 1);
-
-  h2.innerHTML = `Game Over! <b>Your score was ${level - 1}</b><br>Press any key to start`;
-
-  document.body.classList.add("gameover");
-
   wrongSound.currentTime = 0;
   wrongSound.play();
 
-  wrongSound.onended = () => {
-    document.body.classList.remove("gameover");
-  };
+  maxScore = Math.max(maxScore, level - 1);
 
-  reset();
+  document.body.classList.add("gameover");
+  statusText.innerHTML = `Game Over!<br>Your Score: ${level - 1}`;
+
+  setTimeout(() => {
+    document.body.classList.remove("gameover");
+    resetGame();
+  }, 900);
 }
 
-// ===== RESET GAME =====
-function reset() {
+// ===== RESET =====
+function resetGame() {
   gameSeq = [];
   userSeq = [];
-  gameStarted = false;
   level = 0;
+  gameStarted = false;
+  startBtn.innerText = "▶ Restart Game";
+  startBtn.style.display = "inline-block";
 }
